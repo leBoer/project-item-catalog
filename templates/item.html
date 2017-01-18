@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="col-md-8">
+  <h2>{{ item.name }} ({{item.user.name}})</h2>
+  <p>{{ item.description}}</p>
+  {% if username and username==item.user.name %}
+  <a href="{{ url_for('editItem', item_name=item.name) }}">Edit</a>
+  <a href="{{ url_for('deleteItem', item_name=item.name) }}">Delete</a>
+  {% endif %}
+</div>
+
+
+
+
+{% endblock %}
