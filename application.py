@@ -57,6 +57,22 @@ def itemJSON(item_id):
     return jsonify(item=item.serialize)
 
 
+# Gives the full catalog with categories and items in one JSON
+@app.route('/catalog/json')
+def catalogJSON():
+    categories = session.query(Category).all()
+    serializedCategories = []
+    for c in categories:
+        new_category = c.serialize
+        items = session.query(Item).filter_by(category_id=c.id).all()
+        serializedItems = []
+        for i in items:
+            serializedItems.append(i.serialize)
+        new_category['items'] = serializedItems
+        serializedCategories.append(new_category)
+    return jsonify(categories=[serializedCategories])
+
+
 # Front page with all categories and latest item
 @app.route('/')
 def showFront():
