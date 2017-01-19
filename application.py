@@ -11,15 +11,10 @@ from datetime import datetime
 # Imports for credentials
 from flask import session as login_session
 from flask import make_response
-from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 import httplib2
 import json
 import random
 import string
-import requests
-
-# CLIENT_ID = json.loads(
-#     open('client_secrets.json', 'r').read())['web']['client_id']
 
 app = Flask(__name__)
 
@@ -110,8 +105,8 @@ def showCategory(category_name):
 
 # Shows a description of a specific item.
 # Note that I would have preferred to include the unique ID's in the route,
-# but this choice seemed to be a requirement for the project. I will have
-# to make sure that the names are unique as well.
+# but this choice seemed to be a requirement for the project. If I build
+# on this at a later stage, I will include the category and item id.
 @app.route('/catalog/<category_name>/<item_name>/')
 def showItem(category_name, item_name):
     item = session.query(Item).filter_by(name=item_name).one()
@@ -181,6 +176,7 @@ def editItem(item_name):
                                category_name=item.category.name)
 
 
+# Lets the creator of an item delete it
 @app.route('/catalog/<item_name>/delete', methods=['GET', 'POST'])
 def deleteItem(item_name):
     item = session.query(Item).filter_by(name=item_name).one()
@@ -199,6 +195,7 @@ def deleteItem(item_name):
                                    item=item)
     else:
         return redirect(url_for('showFront'))
+
 
 @app.route('/login')
 def showLogin():
@@ -225,23 +222,23 @@ def fbconnect():
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
-    # Use token to get user info from API
-    userinfo_url = "https://graph.facebook.com/v2.2/me"
     # Strip expire tag from access token
     token = result.split("&")[0]
 
     url = 'https://graph.facebook.com/v2.4/me?%s&fields=name,id,email' % token
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
-    # print "url sent for API access:%s" % url
-    # print "API JSON result: %s" % result
+
+    # Sets the login_session
     data = json.loads(result)
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
     login_session['email'] = data["email"]
     login_session['facebook_id'] = data["id"]
 
-    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    # The token must be stored in the login_session in order to
+    # properly logout, let's strip out the information before the
+    # equals sign in our token
     stored_token = token.split('=')[1]
     login_session['access_token'] = stored_token
 
@@ -271,10 +268,8 @@ def fbconnect():
     return output
 
 
-
-
-
-# Disconnect functions
+# Disconnect functions. Can add google signin by uncommenting here,
+# and add some more code
 @app.route('/disconnect')
 def disconnect():
     if 'provider' in login_session:
@@ -332,6 +327,7 @@ def createUser(login_session):
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'

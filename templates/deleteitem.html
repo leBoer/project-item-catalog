@@ -9,23 +9,23 @@
       <h1>Delete</h1>
     </div>
   </div>
-<h2> Are you sure you want to delete {{item.name}}? </h2>
+  
+  <h2> Are you sure you want to delete {{item.name}}? </h2>
 
-<div class="col-md-2">
-  <form action="{{ url_for('deleteItem', item_name=item.name)}}" method = 'POST'>
+  <div class="col-md-2">
+    <form action="{{ url_for('deleteItem', item_name=item.name)}}" method = 'POST'>
 
-    <button type="submit" class="btn btn-default delete" id="submit" type="submit">
-    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete</button>
+      <button type="submit" class="btn btn-default delete" id="submit" type="submit">
+      <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete</button>
 
-  </form>
-</div>
+    </form>
+  </div>
 
-<div class="col-md-2">
-  <a href = '{{url_for('showFront')}}'>
-    <button class="btn btn-default delete">
-    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
-  </a>
-</div>
-
+  <div class="col-md-2">
+    <a href = '{{url_for('showFront')}}'>
+      <button class="btn btn-default delete">
+      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
+    </a>
+  </div>
 
 {% endblock %}
